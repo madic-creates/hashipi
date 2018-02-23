@@ -1,0 +1,54 @@
+---
+- hosts: all
+
+  tasks:
+  - name: Role utils
+    include_role:
+      name: utils
+    when: "'bramble' in group_names"
+    tags:
+      - utils
+
+  - name: Role dnsmasq
+    include_role:
+      name: dnsmasq
+    when: "'bramble' in group_names"
+    tags:
+      - utils
+      - dnsmasq
+
+  - name: Role consul
+    include_role:
+      name: consul
+    when: "'bramble' in group_names"
+    tags:
+      - consul
+
+  - name: Role nomad
+    include_role:
+      name: nomad
+    when: "'bramble' in group_names"
+    tags:
+      - nomad
+
+  - name: Role vault
+    include_role:
+      name: vault
+    when: "'master' in group_names"
+    tags:
+      - vault
+
+  - name: Role docker
+    include_role:
+      name: docker
+    when: "'followers' in group_names"
+    tags:
+      - docker
+
+# Will not work on an arm (rpi) cpu! Only x86
+  - name: Role hashiui
+    include_role:
+      name: hashiui
+    when: "'hashiui' in group_names"
+    tags:
+      - hashiui

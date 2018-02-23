@@ -1,9 +1,19 @@
 ---
-consul_version: "0.7.1"
-consul_checksum: "sha256:e7b6846fb338c31e238f9b70cc42bd35f7de804cc31d2d91fe23cbe5de948aae"
+consul_version: "1.0.3"
+consul_architecture_map:
+  amd64: amd64
+  x86_64: amd64
+  armv7l: arm
+  aarch64: arm64
+consul_architecture: "{{ consul_architecture_map[ansible_architecture] }}"
+consul_os: "{{ ansible_system|lower }}"
+consul_pkg: "consul_{{ consul_version }}_{{ consul_os }}_{{ consul_architecture }}.zip"
+consul_zip_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_{{ consul_os }}_{{ consul_architecture }}.zip"
+consul_owner: consul
+consul_group: consul
 consul_install_path: /usr/local/consul
-consul_dc: alpha
-consul_dns_domain: bramble.local
+consul_dc: default
+consul_dns_domain: consul.local
 consul_bind: "{{ ansible_default_ipv4.address }}"
 consul_client: "{{ ansible_default_ipv4.address }}"
 consul_advertise: "{{ ansible_default_ipv4.address }}"
@@ -25,3 +35,5 @@ consul_cert_file: consul.cert
 consul_key_file: consul.key
 
 consul_do_auth: no
+
+consul_ui_enabled: no

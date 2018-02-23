@@ -32,19 +32,11 @@
 
 - name: configure dnsmasq for consul
   template:
-    src: 10-consul
-    dest: /etc/dnsmasq.d/10-consul
-    mode: 755
+    src: etc/dnsmasq.d/10-consul.conf.j2
+    dest: /etc/dnsmasq.d/10-consul.conf
+    mode: 0644
   notify:
     - restart dnsmasq
-  tags:
-    - dnsmasq
-
-- name: enable dnsmasq
-  service:
-    name: dnsmasq
-    state: started
-    enabled: yes
   tags:
     - dnsmasq
 
@@ -67,29 +59,11 @@
     - dnsmasq
   when: ansible_distribution == 'Debian'
 
-#supersede domain-name
-#prepend domain-name-servers
 - meta: flush_handlers
 
 - name: add dnsmasq to /etc/resolv.conf
   template:
     dest: /etc/resolv.conf
     src: etc/resolv.conf.j2
-  tags:
-    - dnsmasq
-
-- name: set appropriate hostname
-  hostname:
-    name: "{{ hostname }}"
-  tags:
-    - dnsmasq
-
-- name: update hosts file
-  template:
-    src: etc/hosts.j2
-    dest: /etc/hosts
-    owner: root
-    group: root
-    mode: 0644
   tags:
     - dnsmasq

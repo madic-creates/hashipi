@@ -1,0 +1,54 @@
+---
+- name: Create hashiui group
+  group:
+    name: "{{ hashiui_group }}"
+    state: present
+  when: hashiui_group != 'root'
+  tags:
+    - hashiui    
+
+- name: Create hashiui user
+  user:
+    home: /var/lib/hashiui
+    name: "{{ hashiui_owner }}"
+    group: "{{ hashiui_group }}"
+    system: yes
+  when: hashiui_owner != 'root'
+  tags:
+    - hashiui
+
+- name: create the install paths
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: "{{ hashiui_owner }}"
+    group: "{{ hashiui_group }}"
+  with_items:
+    - "{{ hashiui_install_path }}/{{ hashiui_version }}"
+  tags:
+    - hashiui
+
+- name: Download hashiui binary
+  get_url:
+    url: "{{ hashiui_zip_url }}"
+    dest: "{{ hashiui_install_path }}/{{ hashiui_version }}/hashi-ui-linux-amd64"
+    owner: root
+    group: root
+    mode: 0755
+  register: hashiui_download
+  tags:
+    - hashiui
+
+- name: link the versioned hashiui to the local sbin
+  file:
+    src: "{{ hashiui_install_path }}/{{ hashiui_version }}/hashi-ui-linux-amd64"
+    dest: /usr/local/sbin/hashiui
+    owner: root
+    group: root
+    state: link
+  notify:
+    - restart hashiui
+  tags:
+    - hashiui
+  when: not ansible_check_mode and hashiui_download.changed

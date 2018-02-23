@@ -5,7 +5,11 @@
   "node_name": "{{ ansible_hostname }}",
   "rejoin_after_leave": true,
   "domain": "{{ consul_dns_domain }}",
+  "client_addr": "0.0.0.0",
   "recursors" : [ "8.8.8.8" ],
+{% if consul_ui_enabled %}
+  "ui": true,
+{% endif %}
 {% if consul_bootstrap_expect > 1 %}
   "retry_join": [ {{ consul_retry_join }} ],
 {% endif %}
@@ -17,13 +21,13 @@
   "encrypt": "{{ consul_gossip_key }}",
 {% endif %}
 {% if consul_do_ssl %}
-  "ca_file": "/etc/consul/ssl/{{ consul_ca_file }}",
-  "cert_file": "/etc/consul/ssl/{{ consul_cert_file }}",
-  "key_file": "/etc/consul/ssl/{{ consul_key_file }}",
+  "ca_file": "/etc/consul.d/ssl/{{ consul_ca_file }}",
+  "cert_file": "/etc/consul.d/ssl/{{ consul_cert_file }}",
+  "key_file": "/etc/consul.d/ssl/{{ consul_key_file }}",
   "verify_incoming": true,
   "verify_outgoing": true,
 {% endif %}
+  "enable_syslog": true,
   "data_dir": "/var/lib/consul",
-  "ui_dir": "/usr/share/consul-ui",
   "disable_remote_exec": {{ consul_disable_remote_exec }}
 }

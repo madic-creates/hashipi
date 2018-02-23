@@ -1,0 +1,58 @@
+---
+- name: Create consul group
+  group:
+    name: "{{ consul_group }}"
+    state: present
+  when: consul_group != 'root'
+  tags:
+    - consul    
+
+- name: Create consul user
+  user:
+    home: /var/lib/consul
+    name: "{{ consul_owner }}"
+    group: "{{ consul_group }}"
+    system: yes
+  when: consul_owner != 'root'
+  tags:
+    - consul
+
+- name: create the install paths
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: "{{ consul_owner }}"
+    group: "{{ consul_group }}"
+  with_items:
+    - "{{ consul_install_path }}/{{ consul_version }}"
+    - /etc/consul.d
+    - /var/lib/consul
+    - /run/consul
+  tags:
+    - consul
+
+- name: Download and extract consul
+  unarchive:
+    src: "{{ consul_zip_url }}"
+    dest: "{{ consul_install_path }}/{{ consul_version }}"
+    owner: root
+    group: root
+    copy: no
+    creates: "{{ consul_install_path }}/{{ consul_version }}/consul"
+  register: consul_download
+  tags:
+    - consul
+
+- name: link the versioned consul to the local sbin
+  file:
+    src: "{{ consul_install_path }}/{{ consul_version }}/consul"
+    dest: /usr/local/sbin/consul
+    owner: root
+    group: root
+    state: link
+  notify:
+    - restart consul
+  tags:
+    - consul
+  when: not ansible_check_mode and consul_download.changed

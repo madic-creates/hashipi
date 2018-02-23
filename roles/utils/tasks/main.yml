@@ -1,18 +1,27 @@
 ---
-- name: install check scripts
-  template:
-    src: check-service-active.j2
-    dest: /usr/local/bin/check-service-active
-    mode: u=rwx,g=rx,o=rx
-  tags:
-    - utils
+- name: Check if avahi-daemon.service exists
+  stat:
+    path: /lib/systemd/system/avahi-daemon.service
+  register: avahidaemon_service_status
 
-- apt:
-    name: htop
-    update_cache: yes
-  with_items:
-    - htop
-    - dnsutils
-    - telnet
-  tags:
-    - utils
+- name: Stop and disable avahi-daemon
+  systemd: name=avahi-daemon state=stopped enabled=no
+  when: avahidaemon_service_status.stat.exists
+
+- name: Check if avahi-daemon.socket exists
+  stat:
+    path: /lib/systemd/system/avahi-daemon.socket
+  register: avahidaemon_socket_status
+
+- name: Stop and disable avahi-daemon.socket
+  systemd: name=avahi-daemon.socket state=stopped enabled=no
+  when: avahidaemon_socket_status.stat.exists
+
+- name: Check if bluetooth.service exists
+  stat:
+    path: /lib/systemd/system/bluetooth.service
+  register: bluetooth_service_status
+
+- name: Stop and disable bluetooth
+  systemd: name=bluetooth state=stopped enabled=no
+  when: bluetooth_service_status.stat.exists

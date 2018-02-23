@@ -1,2 +1,5 @@
 .DS_Store
 vault.keys
+*.log
+*.retry
+group_vars/all/custom.yml

@@ -1,0 +1,73 @@
+---
+# - name: deploy tls files
+#   copy:
+#     src: "{{ item.src }}"
+#     dest: "{{ item.dest }}"
+#   with_items:
+#     - src: etc/consul.d/ssl/cacert.pem
+#       dest: /etc/consul.d/ssl/{{ consul_ca_file }}
+#     - src: etc/consul.d/ssl/certs/consul.cert.pem
+#       dest: /etc/consul.d/ssl/{{ consul_cert_file }}
+#     - src: etc/consul.d/ssl/private/consul.key.pem
+#       dest: /etc/consul.d/ssl/{{ consul_key_file }}
+#   when: consul_do_ssl
+#   notify:
+#     - restart consul
+#   tags:
+#     - consul
+
+- name: install consul scripts
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0755
+  with_items:
+    - { src: 'consul-wait-for-leader.sh.j2', dest: '/usr/local/sbin/consul-wait-for-leader.sh' }
+    - { src: 'destroy-consul-install.sh.j2', dest: '/usr/local/sbin/destroy-consul-install.sh' }
+  tags:
+    - consul
+
+- name: install consul systemd unit
+  template:
+    src: consul.service.j2
+    dest: "{{ systemd_dir }}/consul.service"
+    mode: 0644
+  notify:
+    - reload daemon
+    - restart consul
+  tags:
+    - consul
+
+- name: configure consul
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - { src: 'consul.json.j2', dest: '/etc/consul.d/consul.json' }
+  notify:
+    - restart consul
+  tags:
+    - consul
+
+- meta: flush_handlers
+
+- name: Ensure consul is started
+  service:
+    name: consul
+    state: started
+
+- pause:
+    seconds: 3
+
+- name: join cluster of consul-dcs
+  command: "/usr/local/sbin/consul join {{ groups['consul'] | random }}"
+  run_once: yes
+  tags:
+    - consul
+
+- name: wait for leader
+  command: /usr/local/sbin/consul-wait-for-leader.sh
+  register: leader_status
+  tags:
+    - consul

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# {{ ansible_managed }}
+
+set -e
+
+systemctl stop consul.service && systemctl disable consul.service
+rm -rf {{ consul_install_path }} && \
+rm -rf /var/lib/consul && \
+rm -rf /etc/consul.d && \
+rm -rf /run/consul && \
+rm /usr/local/sbin/consul && \
+rm /usr/local/sbin/consul-wait-for-leader.sh && \
+rm /etc/systemd/system/consul.service

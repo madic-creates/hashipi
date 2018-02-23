@@ -1,0 +1,39 @@
+# {{ ansible_managed }}
+bind_addr = "0.0.0.0"
+data_dir = "/var/lib/nomad"
+region = "{{ nomad_dc }}"
+datacenter = "{{ nomad_dc }}"
+name = "{{ ansible_hostname }}"
+log_level = "DEBUG"
+enable_debug = true
+{% if nomad_enable_syslog %}
+enable_syslog = true
+{% endif %}
+
+advertise {
+  # We need to specify our host's IP because we can't
+  # advertise 0.0.0.0 to other nodes in our cluster.
+  rpc = "{{ ansible_default_ipv4.address }}:4647"
+{% if nomad_leader_group in group_names %}
+  serf = "{{ ansible_default_ipv4.address }}:4648"
+  http = "{{ ansible_default_ipv4.address }}:4646"
+{% endif %}
+}
+
+{% if nomad_leader_group in group_names %}
+server {
+  enabled = true
+  bootstrap_expect = {{ nomad_bootstrap_expect }}
+  retry_join = {{ nomad_retry_join }}
+  rejoin_after_leave = true
+}
+{% endif %}
+{% if nomad_leader_group not in group_names %}
+client {
+  enabled = true
+  servers = {{ nomad_retry_join }}
+  options = {
+    "driver.raw_exec.enable" = "1"
+  }
+}
+{% endif %}

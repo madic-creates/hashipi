@@ -1,0 +1,21 @@
+# {{ ansible_managed }}
+[Unit]
+Description=Runs Vault server
+Documentation=http://www.vaultproject.io
+Requires=network-online.target
+After=network.target
+
+[Service]
+User={{ vault_owner }}
+Group={{ vault_group }}
+PIDFile=/run/vault/vault.pid
+Restart=on-failure
+Environment=GOMAXPROCS=2
+ExecStartPre=[ -f "/run/vault/vault.pid" ] && /usr/bin/rm -f /run/vault/vault.pid
+ExecStart=/usr/local/sbin/vault server -config /etc/vault.d/vault.hcl
+ExecReload=/bin/kill -s HUP $MAINPID
+KillSignal=SIGINT
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target

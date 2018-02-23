@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# {{ ansible_managed }}
+
+set -e
+
+systemctl stop hashiui.service && systemctl disable hashiui.service
+rm -rf {{ hashiui_install_path }} && \
+rm /usr/local/sbin/hashiui && \
+rm /etc/systemd/system/hashiui.service

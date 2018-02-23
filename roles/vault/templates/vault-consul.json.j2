@@ -3,9 +3,11 @@
     "name": "vault",
     "tags": [ "{{ vault_datacenter }}" ],
     "port": 8200,
-    "check": {
-      "script": "curl http://localhost:8200/v1/sys/health",
-      "interval": "10s"
-    }
+    "checks": [
+      {
+        "http": "http://localhost:8200/v1/sys/health",
+        "interval": "10s"
+      }
+    ]
   }
 }

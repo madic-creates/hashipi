@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# {{ ansible_managed }}
+
+set -e
+
+systemctl stop vault.service && systemctl disable vault.service
+rm -rf {{ vault_install_path }} && \
+rm -rf /var/lib/vault && \
+rm -rf /etc/vault.d && \
+rm -rf /run/vault && \
+rm /usr/local/sbin/vault && \
+rm /etc/systemd/system/vault.service && \
+rm /etc/consul.d/vault-consul.json
+systemctl restart consul

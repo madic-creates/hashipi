@@ -1,0 +1,22 @@
+# {{ ansible_managed }}
+[Unit]
+Description=Nomad cluster manager
+Documentation=http://www.nomadproject.io
+Requires=network-online.target
+After=network.target
+
+[Service]
+User={{ nomad_owner }}
+Group={{ nomad_group }}
+PIDFile=/run/nomad/nomad.pid
+Restart=on-failure
+Environment=GOMAXPROCS=2
+ExecStartPre=[ -f "/run/nomad/nomad.pid" ] && /usr/bin/rm -f /run/nomad/nomad.pid
+#ExecStartPre=/usr/local/sbin/nomad validate /etc/nomad.d/nomad.hcl
+ExecStart=/usr/local/sbin/nomad agent --config=/etc/nomad.d/nomad.hcl
+ExecReload=/bin/kill -s HUP $MAINPID
+KillSignal=SIGINT
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target

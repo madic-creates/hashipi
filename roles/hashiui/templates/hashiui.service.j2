@@ -1,0 +1,22 @@
+# {{ ansible_managed }}
+[Unit]
+Description=A modern user interface for @hashicorp Consul & Nomad
+Requires=network-online.target
+After=network.target
+
+[Service]
+User={{ hashiui_owner }}
+Group={{ hashiui_group }}
+PIDFile=/run/hashiui/hashiui.pid
+Restart=on-failure
+Environment=GOMAXPROCS=2
+ExecStartPre=[ -f "/run/hashiui/hashiui.pid" ] && /usr/bin/rm -f /run/hashiui/hashiui.pid
+{% for host in groups['master'] %}
+ExecStart=/usr/local/sbin/hashiui -consul-enable -consul-address {{ hostvars[host].ansible_default_ipv4.address }}:8500 -nomad-enable -nomad-address http://{{ hostvars[host].ansible_default_ipv4.address }}:4646
+{% endfor %}
+ExecReload=/bin/kill -s HUP $MAINPID
+KillSignal=SIGINT
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target

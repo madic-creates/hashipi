@@ -1,6 +1,6 @@
 ---
 - name: restart networkmanager
-  command: systemctl restart NetworkManager
+  service: name=networkmanager state=restarted
 
 - name: restart dnsmasq
-  command: systemctl restart dnsmasq
+  service: name=dnsmasq state=restarted enabled=yes

@@ -1,0 +1,43 @@
+---
+- name: install vault scripts
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0755
+  with_items:
+    - { src: 'destroy-vault-install.sh.j2', dest: '/usr/local/sbin/destroy-vault-install.sh' }
+  tags:
+    - vault
+
+- name: configure vault for systemd
+  template:
+    src: vault.service.j2
+    dest: "{{ systemd_dir }}/vault.service"
+    mode: 0644
+  notify:
+    - reload daemon
+    - restart vault
+  tags:
+    - vault
+
+- name: configure vault
+  template:
+    src: vault.conf.j2
+    dest: /etc/vault.d/vault.hcl
+    mode: 0600
+  notify:
+    - restart vault
+  tags:
+    - vault
+
+- name: register vault with consul
+  template:
+    src: vault-consul.json.j2
+    dest: /etc/consul.d/vault-consul.json
+    mode: 0644
+  notify:
+    - restart consul
+  tags:
+    - vault
+
+- meta: flush_handlers

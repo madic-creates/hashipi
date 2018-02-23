@@ -1,0 +1,59 @@
+---
+- name: Create nomad group
+  group:
+    name: "{{ nomad_group }}"
+    state: present
+  when: nomad_group != 'root'
+  tags:
+    - nomad
+
+- name: Create nomad user
+  user:
+    home: /var/lib/nomad
+    name: "{{ nomad_owner }}"
+    group: "{{ nomad_group }}"
+    system: yes
+  when: nomad_owner != 'root'
+  tags:
+    - nomad
+
+- name: create the install paths
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: "{{ nomad_owner }}"
+    group: "{{ nomad_group }}"
+  with_items:
+    - "{{ nomad_install_path }}/{{ nomad_version }}"
+    - /etc/nomad.d
+    - /var/lib/nomad
+    - /var/lib/nomad/examples
+    - /run/nomad
+  tags:
+    - nomad
+
+- name: Download and extract nomad
+  unarchive:
+    src: "{{ nomad_zip_url }}"
+    dest: "{{ nomad_install_path }}/{{ nomad_version }}"
+    owner: root
+    group: root
+    copy: no
+    creates: "{{ nomad_install_path }}/{{ nomad_version }}/nomad"
+  register: nomad_download
+  tags:
+    - nomad
+
+- name: link the versioned nomad to the local bin
+  file:
+    src: "{{ nomad_install_path }}/{{ nomad_version }}/nomad"
+    dest: /usr/local/sbin/nomad
+    owner: root
+    group: root
+    state: link
+  notify:
+    - restart nomad
+  tags:
+    - nomad
+  when: not ansible_check_mode and nomad_download.changed

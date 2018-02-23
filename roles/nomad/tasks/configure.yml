@@ -1,0 +1,45 @@
+---
+- name: install nomad scripts
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0755
+  with_items:
+    - { src: 'destroy-nomad-install.sh.j2', dest: '/usr/local/sbin/destroy-nomad-install.sh' }
+  tags:
+    - nomad
+
+- name: setup nomad config
+  template:
+    src: nomad.hcl.j2
+    dest: /etc/nomad.d/nomad.hcl
+  notify:
+    - restart nomad
+  tags:
+    - nomad
+
+- name: install nomad systemd unit
+  template:
+    src: nomad.service.j2
+    dest: "{{ systemd_dir }}/nomad.service"
+    mode: 0644
+  notify:
+    - reload daemon
+    - restart nomad
+  tags:
+    - nomad
+
+- name: copy example nomad jobs
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - { src: 'nomad_examples/nginx.nomad', dest: '/var/lib/nomad/examples/nginx.nomad' }
+    - { src: 'nomad_examples/redis.nomad', dest: '/var/lib/nomad/examples/redis.nomad' }
+    - { src: 'nomad_examples/fabio.nomad', dest: '/var/lib/nomad/examples/fabio.nomad' }
+  when: "nomad_leader_group in group_names"
+  tags:
+    - nomad
+
+- meta: flush_handlers

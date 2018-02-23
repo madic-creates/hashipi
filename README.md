@@ -1,4 +1,4 @@
-# hashpi
+# hashipi
 
 > Rasberry Pi rack running clustered Hashicorp datacenter infrastructure (nomad, vault, consul)
 
@@ -7,130 +7,80 @@
 + [Software Deployment](#software-deployment)
 
 ## Preamble
+This project is heavily inspired by the [hashpi ansible scripts from timperrett](https://github.com/timperrett/hashpi). Special thanks to him! The hashipi project isn't just a copy of his project but heavily extends it.
 
-In order to follow along with this build, you would need to have the following components and tools available to you:
+In order to follow along with this build, you would need to have the following components available. Because I'm from germany, I link to the german amazon website. In this repo I will not explain on how to use the software from hashicorp. I've written about this on my german blog post.
 
 ### Hardware Shopping List
 
-+ 1x [GearRobot Case](https://www.amazon.com/gp/product/B00MYFAAPO/)
-+ 1x [DualComm 5-Port Switch (USB Powered)](https://www.amazon.com/gp/product/B002BSA7GG/)
-+ 4x [Raspberry Pi 3 Model B Motherboard](https://www.amazon.com/gp/product/B01CD5VC92/)
-+ 4x [16GB SDHC cards](https://www.amazon.com/gp/product/B004G605OA/)
-+ 1x [Anker 5-Port powered USB hub](https://www.amazon.com/gp/product/B00VH8ZW02/)
-+ 1x [16x2 LCD screen](https://www.adafruit.com/products/181)
-+ 1x [i2c / SPI LCD backpack](https://www.adafruit.com/product/292)
-+ 1x [Male to Female Jumper Wires](https://www.google.com/shopping/product/12597180957004446265)
-+ 4x small Cat5e cable (typically you make these, but you can buy pre-made ones if you want)
-+ 4x [USB-B to USB-micro converter](https://www.google.com/shopping/product/13932993478778087101). These are for AC power to the motherboard from the hub.
++ 4x [Raspberry Pi 3 Model B](https://www.amazon.de/gp/product/B01CD5VC92/)
++ 4x [16GB SDHC cards](https://www.amazon.de/gp/product/B01EAKB0YK/)
++ 1x [Anker 5-Port powered USB recharger](https://www.amazon.de/gp/product/B00VUGOSWY/)
++ 4x [Askbork USB-B to USB-micro cable](https://www.amazon.de/gp/product/B01D8AWFVK/)
++ 1x [Stackable Raspberry Pi Case](https://www.amazon.de/gp/product/B00NB1WPEE/)
++ 3x [Intermediate plate for the stackable case](https://www.amazon.de/gp/product/B00NB1WQZW/)
++ 1x [W-Linx 10/100 5 Port Switch (USB Powered)](https://www.amazon.de/gp/product/B010FWLEJI/)
++ 4x small Cat5e cable (e.g. 0.25m or 0.5m). I buy mine from [kab24.de](https://www.kab24.de/netzwerk/kab24-cat6-patchkabel-netzwerkkabel-weiss-sftp-pimf-geschirmt-gigabit.html)
 
-### Tools Required
-
-+ 1x Soldering Iron
-+ 1x pack of solder (leaded or lead-free, either will work)
-+ 1x [Crimping Tool](https://www.amazon.com/gp/product/B002D3B97U/)
-+ 1x pair of thin, long-nose pliers (these are useful for the case build)
-+ 1x case of minature / precision screwdrivers (e.g. [these](http://www.homedepot.com/p/TEKTON-Precision-Screwdriver-Set-6-Piece-2985/207096248?cm_mmc=Shopping%7cTHD%7cG%7c0%7cG-BASE-PLA-D25T-HandTools%7c&gclid=CjwKEAiA94nCBRDxismumrL83icSJAAeeETQQSkzNXpnq7FmWWAG6wa_VkhktpHDJ_dErC8Cn7cvIBoC7VHw_wcB&gclsrc=aw.ds) or [these](http://www.firemountaingems.com/itemdetails/H201579TL?engine=google&campaign=[ADL]+[Non-Brand]+[PLA]+[Shopping]&adgroup=[PLA]+[Shopping]+Best+Sellers&kwid=productads-adid^113207974204-device^c-plaid^61529866819-sku^H201579TL-adType^PLA))
 
 ## Hardware Buildout
+![stage 1](/img/build01.jpg)
 
-+ Assemble the motherboards with the case (instructions from the case).
++ Assemble the motherboards with the case (instructions from the case)
 
-![stage 1](https://raw.githubusercontent.com/timperrett/hashpi/master/docs/img/build-01.JPG)
+![stage 2](/img/build02.jpg)
 
-![stage 2](https://raw.githubusercontent.com/timperrett/hashpi/master/docs/img/build-02.JPG)
++ Connect the USB power cords and the network cables to the motherboards
 
-
-+ Cut and crimp the nessicary ethernet cables needed to connect the motherboards to the switch. Choose a scheme (A or B, but stick to just one):
-
-![cat5](http://cdn.instructables.com/FDR/2Z0W/FPKFCZ0Q/FDR2Z0WFPKFCZ0Q.MEDIUM.gif)
-
-+ Connect the USB power cords and the network cables to the motherboards.
-
-![stage 3](https://raw.githubusercontent.com/timperrett/hashpi/master/docs/img/build-03.JPG)
-
-+ If you're having issues with the motherboard, there are two LEDs indicate status. Explanations for which can be [found here](http://raspberrypi.stackexchange.com/questions/24664/what-do-the-leds-on-the-b-mean).
-
-+ Now its time to attach the i2pc backpack to the LCD. There's a decent tutorial [over here](https://learn.adafruit.com/i2c-spi-lcd-backpack), but you absolutely need to know how to solder and use the aforementioned tools (never a better time to learn this stuff that the present!).
-
-![stage 4](https://raw.githubusercontent.com/timperrett/hashpi/master/docs/img/build-04.JPG)
+![stage 3](/img/build03.jpg)
 
 ## Software Deployment
 
-These instructions assume you are running *Raspbian Lite*, Jesse or later (this requires [systemd](https://www.freedesktop.org/wiki/Software/systemd/)). You can download [Raspbian Lite from here](https://www.raspberrypi.org/downloads/raspbian/), and I would strongly recomend checking out resin.io [Ether](https://etcher.io/) for a quick and convenient way to flash your SD cards from OSX, with the vanilla Raspbian image you are downloading.
+These instructions assume you are running *Raspbian Lite Stretch* (Jessie not tested). The roles included require systemd. You can download [Raspbian Lite from here](https://www.raspberrypi.org/downloads/raspbian/).
+On Windows you can use [Win32DiskImager](https://sourceforge.net/projects/win32diskimager/) to copy the image to the sd card.
+For Mac I've heard [etcher from resin.io](https://etcher.io/) should be great for copying images to the sd card.
 
-There is a set of initial setup that must be done manually to get the Pi's accessible remotely (and availalbe for automatic provisioning). I used the following steps to get the nodes going:
+For the rest of the guide I assume a working ansible connection from your client to the pis.
 
-```
-# set a new root password
-$ sudo passwd root
-<enter new password>
+#### Debug Playbook
 
-# set your the password for the `pi` user
-$ sudo passwd pi
-<enter new password>
-
-$ sudo reboot
-
-# update the system, disable avahi and bluetooth
-$ sudo systemctl enable ssh && \
-  sudo systemctl start ssh
-
-# optionally install a few useful utilities
-$ sudo apt-get install -y htop
-
-```
-
-Now we have our four Pi's running SSH and have disabled the features we wont be using in this cluster build out (e.g. bluetooth). Now we are ready to deploy the bulk of the software! This repo makes use of [Ansible](https://www.ansible.com/) as its provisioning system; in order to automate the vast majority of operations we conduct on the cluster. This makes them repeatable and testable. Please checkout the Ansible documentation if you are not familiar with the tool.
-
-#### Bootstrap Playbook
-
-The bootstrap playbook setups up core functionality so that we can run more complicated playbooks on the Pis themselves, and also get access to the cluster nodes without having to SSH with an explicit username and password (add your key to the `user` roles `vars` file). After first turning on the cluster and enabling SSH, the following should be executed in the root of the repository:
-
-```
-./bootstrap.yml
-```
-
-This mainly kills avahai-daemon and several other processes we will not be needing, going forward.
+The debug playbook only outputs the default ipv4 / ipv6 addresses from the hosts in the inventory.ini. But it's easy to expand on this if required.
 
 #### Site Playbook
 
-Once you've bootstrapped your cluster and you can SSH into the nodes with your key, then we can simply run the ansible site plays, and let it install all the nessicary gubbins.
+The site playbook will do the following thinks:
 
++ bootstrap the pis (disables avahi-daemon and bluetooth)
++ install [dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) on every pi
++ install [consul](https://www.consul.io/) on 3 nodes for the quorum
++ install [nomad](https://www.nomadproject.io/) on the pi in the master group as the server and on every other pi as client
++ install [vault](https://www.vaultproject.io/) only on the pi in the master group; uses consul as secure backend
++ install [docker](https://docker.com/) only on the pis which are also nomad clients
++ install [hashiui](https://github.com/jippi/hashi-ui) NOT on the pis, requires a cpu with x86 architecture! Therefore the group hashiui
+
+Most of the setup is automatic, except for the vault initialisation. During initialisation vault generates 5 per installation unique keys. The keys are required to unlock vault after e.g. a reboot to unlock it again. The steps for the first setup are documented in this [blog post](https://www.vaultproject.io/intro/getting-started/deploy.html). In short:
 ```
-./site.yml
+$ ssh <master>
+$ export VAULT_ADDR="http://$(ip -4 route get 8.8.8.8 | awk '{print $7}' | xargs echo -n):8200"
+$ vault operator init
 ```
+Be sure to keep the generated keys in a safe place, and absolutely do not check them in anywhere!
 
-Any other time you update the cluster using the `site.yml` playbook, be sure to run with the following option:
-
+To unlock vault after a restart:
 ```
-./site.yml --skip-tags=consul-servers,bootstrap
+$ vault operator unseal -tls-skip-verify
 ```
+Due to the nature of this project, beeing a test environment, I'm not really testing ssl for the moment. Priority lies on functionality. For production use you absolutly need to use ssl! This components are too important to risk anything.
 
-This will ensure that the consul servers used to corrdinate everything don't get screwed up during the deployment of new software.
+## Testing
+On the master you can find some nomad example files under /var/lib/nomad/examples.
 
-This set of playbooks installs the following software (in order).
-
-+ Debugging Utils (htop, nslookup, telnet etc)
-+ [Consul](https://www.consul.io/) (runs on 3 nodes as a quorum)
-+ [Vault](https://www.vaultproject.io/) (uses Consul as its secure backend; runs on rpi01)
-+ [Nomad](https://www.nomadproject.io/) (only rpi01 has the `server` component of Nomad installed)
-+ [Prometheus](https://prometheus.io) (only runs on rpi01)
-+ [Grafana](http://grafana.org/)
-+ [Docker](https://docker.com/)
-
-Whilst the setup is vastly automated, there are a few manual steps. When first installing Vault, there is a set of keys that are generated which cannot be automated away, because they are required for vault initialization. The steps to first setup the vault are [documented in this blog post](https://www.vaultproject.io/intro/getting-started/deploy.html) but the TL;DR is:
-
+To run them:
 ```
-$ ssh pi@<baron-ip>
-$ export VAULT_ADDR="http://`ip -4 route get 8.8.8.8 | awk '{print $7}' | xargs echo -n`:8200"
-$ vault init
-
-# be sure to keep the generated keys in a safe place, and absolutely do not check them in anywhere!
-
-$ vault -tls-skip-verify unseal
-
+nomad run /var/lib/nomad/examples/nginx.nomad
+nomad run /var/lib/nomad/examples/redis.nomad
+nomad run /var/lib/nomad/examples/fabio.nomad
 ```
-
-Given this is just a local raspberry pi cluster, I'm not fussing around with SSL as its a development cluster for me. I do however really, really recommend that you use SSL on this thing - or anything else for that matter - that is the best practice can self-signed certs can be easily generated and provided to vault. See the documentation for more information on that.
-
-
+This will start 4 nginx and 1 redis docker container and 3 fabio load balancer instances without docker.
+Check the result with hashiui:3000. In the logs of fabio, visible in hashiui, you can see that it will pick up all in consul registered nginx servers and serve them through port :9999.
+You can also check the ressource allocation and how much the instances use.

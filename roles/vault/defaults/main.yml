@@ -1,5 +1,16 @@
 ---
-vault_version: "0.6.2"
-vault_checksum: "sha256:efc36dcb2044cf4c80af9e71abd9fb4716db8944e7d102f913d17f922a527189"
-vault_install_path: /usr/local/vault/
-vault_datacenter: dc1
+vault_version: "0.9.3"
+vault_architecture_map:
+  amd64: amd64
+  x86_64: amd64
+  armv7l: arm
+  aarch64: arm64
+vault_architecture: "{{ vault_architecture_map[ansible_architecture] }}"
+vault_os: "{{ ansible_system|lower }}"
+vault_pkg: "vault_{{ vault_version }}_{{ vault_os }}_{{ vault_architecture }}.zip"
+vault_zip_url: "https://releases.hashicorp.com/vault/{{ vault_version }}/vault_{{ vault_version }}_{{ vault_os }}_{{ vault_architecture }}.zip"
+vault_install_path: /usr/local/vault
+vault_datacenter: default
+
+vault_owner: root
+vault_group: root

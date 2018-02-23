@@ -1,0 +1,6 @@
+---
+- name: reload daemon
+  systemd: daemon_reload=yes
+
+- name: restart hashiui
+  service: name=hashiui state=restarted enabled=yes

@@ -1,9 +1,19 @@
 ---
-nomad_version: "0.5.0"
-nomad_checksum: "sha256:c85d3ddac0dbb9ed594eabada29daa2bf26619d24f304587c9d7e775c99ad6f6"
-nomad_install_path: /usr/local/consul
-nomad_dc: dc1
-nomad_is_server: no
-nomad_leader_group: baron
+nomad_version: "0.7.1"
+nomad_architecture_map:
+  amd64: amd64
+  x86_64: amd64
+  armv7l: arm
+  aarch64: arm64
+nomad_architecture: "{{ nomad_architecture_map[ansible_architecture] }}"
+nomad_os: "{{ ansible_system|lower }}"
+nomad_pkg: "nomad_{{ nomad_version }}_{{ nomad_os }}_{{ nomad_architecture }}.zip"
+nomad_zip_url: "https://releases.hashicorp.com/nomad/{{ nomad_version }}/nomad_{{ nomad_version }}_{{ nomad_os }}_{{ nomad_architecture }}.zip"
+nomad_install_path: /usr/local/nomad
+nomad_owner: root
+nomad_group: root
+nomad_dc: default
+nomad_leader_group: master
 nomad_bootstrap_expect: "{{ groups[nomad_leader_group] | length }}"
 nomad_retry_join: ' [{% for host in groups[nomad_leader_group] %}"{{ host }}"{% if not loop.last %}, {% endif %}{% endfor %}]'
+nomad_enable_syslog: yes

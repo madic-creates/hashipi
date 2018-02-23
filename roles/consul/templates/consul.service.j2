@@ -1,0 +1,20 @@
+# {{ ansible_managed }}
+[Unit]
+Description=Consul service discovery agent
+Requires=network-online.target
+After=network.target
+
+[Service]
+User={{ consul_owner }}
+Group={{ consul_group }}
+PIDFile=/run/consul/consul.pid
+Restart=on-failure
+Environment=GOMAXPROCS=2
+ExecStartPre=/usr/local/sbin/consul validate /etc/consul.d
+ExecStart=/usr/local/sbin/consul agent -pid-file=/run/consul/consul.pid -config-dir=/etc/consul.d
+ExecReload=/bin/kill -s HUP $MAINPID
+KillSignal=SIGINT
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target

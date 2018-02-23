@@ -1,0 +1,4 @@
+ansible_ssh_user: pi
+ansible_become_pass: raspberry
+
+systemd_dir: /etc/systemd/system

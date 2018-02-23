@@ -1,0 +1,9 @@
+---
+- name: collect debug information from all pis
+  hosts:
+    - all
+  tasks:
+    - name: Get default ipv4 addresses
+      debug: msg="{{ ansible_default_ipv4 }}"
+    - name: Get default ipv6 addresses
+      debug: msg="{{ ansible_default_ipv6 }}"

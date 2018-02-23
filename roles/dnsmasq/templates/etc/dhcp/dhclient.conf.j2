@@ -14,7 +14,7 @@
 option rfc3442-classless-static-routes code 121 = array of unsigned integer 8;
 
 send host-name = gethostname();
-supersede domain-name "{{consul_dns_domain}} node.{{consul_dns_domain}} service.{{consul_dns_domain}}";
+supersede domain-name "{{consul_dns_domain}}" node.{{consul_dns_domain}} service.{{consul_dns_domain}}";
 prepend domain-name-servers 127.0.0.1;
 
 request subnet-mask, broadcast-address, time-offset, routers,

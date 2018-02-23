@@ -1,0 +1,25 @@
+#Listen on all interfaces
+interface=*
+
+addn-hosts=/etc/hosts
+
+# Never forward addresses in the non-routed address spaces.
+bogus-priv
+
+server=8.8.8.8
+server=8.8.4.4
+
+# DNS resolution for all nodes
+{% for host in groups['consul'] %}
+{% if not ansible_hostname == hostvars[host].ansible_hostname %}
+address=/{{ host }}/{{ hostvars[host].ansible_default_ipv4.address }}
+{% endif %}
+{% endfor %}
+
+# configure DNS resolution to consul servers
+server=/{{ consul_dns_domain }}/127.0.0.1#8600
+{% for host in groups['consul'] %}
+{% if not ansible_hostname == hostvars[host].ansible_hostname %}
+server=/{{ consul_dns_domain }}/{{ hostvars[host].ansible_default_ipv4.address }}#8600
+{% endif %}
+{% endfor %}

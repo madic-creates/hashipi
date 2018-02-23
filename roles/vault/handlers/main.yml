@@ -1,7 +1,9 @@
 ---
+- name: reload daemon
+  systemd: daemon_reload=yes
+
 - name: restart vault
-  become: yes
-  become_user: root
-  service:
-    name: vault
-    state: restarted
+  service: name=vault state=restarted enabled=yes
+
+- name: restart consul
+  service: name=consul state=restarted

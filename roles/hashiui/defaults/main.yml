@@ -1,0 +1,6 @@
+---
+hashiui_version: 0.23.0
+hashiui_zip_url: https://github.com/jippi/hashi-ui/releases/download/v{{ hashiui_version }}/hashi-ui-linux-amd64
+hashiui_install_path: /usr/local/hashiui
+hashiui_owner: root
+hashiui_group: root

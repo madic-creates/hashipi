@@ -1,0 +1,23 @@
+---
+- name: install hashiui scripts
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0755
+  with_items:
+    - { src: 'destroy-hashiui-install.sh.j2', dest: '/usr/local/sbin/destroy-hashiui-install.sh' }
+  tags:
+    - hashiui
+
+- name: install hashiui systemd unit
+  template:
+    src: hashiui.service.j2
+    dest: "{{ systemd_dir }}/hashiui.service"
+    mode: 0644
+  notify:
+    - reload daemon
+    - restart hashiui
+  tags:
+    - hashiui
+
+- meta: flush_handlers

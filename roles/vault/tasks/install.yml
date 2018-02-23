@@ -1,0 +1,56 @@
+---
+- name: Create vault group
+  group:
+    name: "{{ vault_group }}"
+    state: present
+  when: vault_group != 'root'
+  tags:
+    - vault
+
+- name: Create vault user
+  user:
+    home: /var/lib/vault
+    name: "{{ vault_owner }}"
+    group: "{{ vault_group }}"
+    system: yes
+  when: vault_owner != 'root'
+  tags:
+    - vault
+
+- name: create the install paths
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: "{{ vault_owner }}"
+    group: "{{ vault_group }}"
+  with_items:
+    - "{{ vault_install_path }}/{{ vault_version }}"
+    - /etc/vault.d
+  tags:
+    - vault
+
+- name: Download and extract vault
+  unarchive:
+    src: "{{ vault_zip_url }}"
+    dest: "{{ vault_install_path }}/{{ vault_version }}"
+    owner: root
+    group: root
+    copy: no
+    creates: "{{ vault_install_path }}/{{ vault_version }}/vault"
+  register: vault_download
+  tags:
+    - vault
+
+- name: link the versioned binary to the local bin
+  file:
+    src: "{{ vault_install_path }}/{{ vault_version }}/vault"
+    dest: /usr/local/sbin/vault
+    owner: root
+    group: root
+    state: link
+  notify:
+    - restart vault
+  tags:
+    - vault
+  when: not ansible_check_mode and vault_download.changed
