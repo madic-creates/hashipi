@@ -9,7 +9,7 @@
 ## Preamble
 This project is heavily inspired by the [hashpi ansible scripts from timperrett](https://github.com/timperrett/hashpi). Special thanks to him! The hashipi project isn't just a copy of his project but heavily extends it.
 
-In order to follow along with this build, you would need to have the following components available. Because I'm from germany, I link to the german amazon website. In this repo I will not explain on how to use the software from hashicorp. I've written about this on my german blog post.
+In order to follow along with this build, you would need to have the following components available. Because I'm from germany, I link to the german amazon website. In this repo I will not explain on how to use the software from hashicorp. I've written about this on my [german blog post](https://www.geekbundle.org/hashipi/).
 
 ### Hardware Shopping List
 
