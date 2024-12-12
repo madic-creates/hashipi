@@ -26,15 +26,15 @@ In order to follow along with this build, you would need to have the following c
 
 ## Hardware Buildout
 
-![stage 1](/img/build01.jpg)
+![stage 1](https://www.geekbundle.org/wp-content/uploads/2018/02/build01.jpg)
 
 + Assemble the motherboards with the case (instructions from the case)
 
-![stage 2](/img/build02.jpg)
+![stage 2](https://www.geekbundle.org/wp-content/uploads/2018/02/build02.jpg)
 
 + Connect the USB power cords and the network cables to the motherboards
 
-![stage 3](/img/build03.jpg)
+![stage 3](https://www.geekbundle.org/wp-content/uploads/2018/02/build03.jpg)
 
 ## Software Deployment
 
